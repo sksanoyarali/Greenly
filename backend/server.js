@@ -4,6 +4,8 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 dotenv.config()
 import dbConnect from './config/db.js'
+import userRouter from './routes/user.routes.js'
+import sellerRouter from './routes/seller.routes.js'
 const app = express()
 
 const port = process.env.PORT || 4000
@@ -25,7 +27,9 @@ app.use(
 app.get('/', (req, res) => {
   res.send('Server is live')
 })
-
+// routes
+app.use('/api/user', userRouter)
+app.use('/api/seller', sellerRouter)
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
