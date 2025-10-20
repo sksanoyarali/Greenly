@@ -7,6 +7,7 @@ import dbConnect from './config/db.js'
 import userRouter from './routes/user.routes.js'
 import sellerRouter from './routes/seller.routes.js'
 import connectCloudinary from './config/cloudinary.js'
+import productRouter from './routes/product.routes.js'
 const app = express()
 
 const port = process.env.PORT || 4000
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 // routes
 app.use('/api/user', userRouter)
 app.use('/api/seller', sellerRouter)
+app.use('api/product', productRouter)
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
