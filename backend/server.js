@@ -6,11 +6,14 @@ dotenv.config()
 import dbConnect from './config/db.js'
 import userRouter from './routes/user.routes.js'
 import sellerRouter from './routes/seller.routes.js'
+import connectCloudinary from './config/cloudinary.js'
 const app = express()
 
 const port = process.env.PORT || 4000
 const allowedOrigins = ['http://localhost:5173']
-dbConnect()
+//connections
+await dbConnect()
+await connectCloudinary()
 // middleware
 
 app.use(express.json())
