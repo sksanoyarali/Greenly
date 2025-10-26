@@ -1,5 +1,5 @@
 // seller login
-
+import jwt from 'jsonwebtoken'
 export const sellerLogin = async (req, res) => {
   const { email, password } = req.body
   try {
@@ -40,7 +40,6 @@ export const sellerIsAuth = async (req, res) => {
   try {
     return res.status(200).json({
       success: true,
-      user,
     })
   } catch (error) {
     console.error(error.message)
