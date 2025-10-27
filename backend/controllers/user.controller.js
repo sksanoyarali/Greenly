@@ -47,6 +47,8 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body
+    console.log(email, password)
+
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -55,6 +57,7 @@ export const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email })
+    console.log(user)
 
     if (!user) {
       return res.status(400).json({
