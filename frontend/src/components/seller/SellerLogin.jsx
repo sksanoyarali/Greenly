@@ -22,9 +22,9 @@ const SellerLogin = () => {
         toast.error(data.message)
       }
     } catch (error) {
-      console.log(error)
+      const msg = error.response?.data?.message || 'Something went wrong'
 
-      toast.error(error.message)
+      toast.error(msg)
     }
   }
   useEffect(() => {
