@@ -1,6 +1,7 @@
 import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { cookieOptions } from '../utils/constant.js'
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body
@@ -12,7 +13,7 @@ export const registerUser = async (req, res) => {
     }
     const existingUser = await User.findOne({ email })
     if (existingUser) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         message: 'User already exists',
       })
@@ -25,12 +26,7 @@ export const registerUser = async (req, res) => {
       expiresIn: '7d',
     })
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', //use secure for production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    res.cookie('token', token, cookieOptions)
     return res.status(201).json({
       success: true,
       message: 'User created successfully',
@@ -76,12 +72,7 @@ export const loginUser = async (req, res) => {
       expiresIn: '7d',
     })
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', //use secure for production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    res.cookie('token', token, cookieOptions)
 
     return res.status(200).json({
       success: true,
@@ -122,9 +113,8 @@ export const isAuth = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     res.clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', //use secure for production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      ...cookieOptions,
+      maxAge: undefined,
     })
     return res.status(200).json({
       success: true,
