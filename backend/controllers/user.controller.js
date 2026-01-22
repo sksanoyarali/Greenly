@@ -5,13 +5,40 @@ import { cookieOptions } from '../utils/constant.js'
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body
+
     if (!email || !name || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Missing details',
+        message: 'All Fields are required',
       })
     }
-    const existingUser = await User.findOne({ email })
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password length must be atleast 6',
+      })
+    }
+
+    const emailRegex = /^\S+@\S+\.\S+$/
+    const normalizedEmail = email.trim().toLowerCase()
+
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format',
+      })
+    }
+
+    if (name.trim().length > 25) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name cannot exceed 25 characters',
+      })
+    }
+
+    const existingUser = await User.findOne({ email: normalizedEmail })
+
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -21,12 +48,18 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const user = await User.create({ name, email, password: hashedPassword })
+    const user = await User.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      password: hashedPassword,
+    })
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     })
 
     res.cookie('token', token, cookieOptions)
+
     return res.status(201).json({
       success: true,
       message: 'User created successfully',
@@ -36,7 +69,7 @@ export const registerUser = async (req, res) => {
     console.error(error.message)
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: 'Internal server error',
     })
   }
 }
@@ -51,7 +84,17 @@ export const loginUser = async (req, res) => {
       })
     }
 
-    const user = await User.findOne({ email })
+    const emailRegex = /^\S+@\S+\.\S+$/
+    const normalizedEmail = email.trim().toLowerCase()
+
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format',
+      })
+    }
+
+    const user = await User.findOne({ email: normalizedEmail })
 
     if (!user) {
       return res.status(400).json({
@@ -82,7 +125,7 @@ export const loginUser = async (req, res) => {
     console.error(error.message)
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: 'Internal server error',
     })
   }
 }
