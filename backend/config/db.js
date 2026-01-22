@@ -2,11 +2,15 @@ import mongoose from 'mongoose'
 
 const dbConnect = async () => {
   try {
-    await mongoose.connect(`${process.env.MONGODB_URI}/greenly`)
-    console.log('Database connected successfully')
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: 'greenly',
+    })
+
+    console.log('✅ MongoDB connected')
   } catch (error) {
-    console.error('Error in db connection')
+    console.error('❌ MongoDB connection failed:', error.message)
     process.exit(1)
   }
 }
+
 export default dbConnect
