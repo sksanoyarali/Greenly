@@ -16,12 +16,13 @@ const app = express()
 
 const port = process.env.PORT || 4000
 const allowedOrigins = [
-  'http://localhost:5173',
+  process.env.FRONTEND_URL,
   'https://greenly-murex.vercel.app',
 ]
 
 app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebHooks)
 //connections
+
 await dbConnect()
 await connectCloudinary()
 // middleware
