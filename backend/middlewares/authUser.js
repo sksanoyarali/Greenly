@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 const authUser = async (req, res, next) => {
   const { token } = req.cookies
   if (!token) {
-    return res.status(402).json({
+    return res.status(401).json({
       success: false,
       message: 'Not authorized',
     })
@@ -13,7 +13,7 @@ const authUser = async (req, res, next) => {
     if (decodedToken.id) {
       req.userId = decodedToken.id
     } else {
-      return res.status(402).json({
+      return res.status(401).json({
         success: false,
         message: 'Not Authorized',
       })
