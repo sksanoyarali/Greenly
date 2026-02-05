@@ -7,10 +7,16 @@ import {
   productById,
   productList,
 } from '../controllers/productController.js'
+import { IMAGE_UPLOAD_LIMIT } from '../utils/constant.js'
 
 const productRouter = express.Router()
 
-productRouter.post('/add', upload.array(['images']), authSeller, addProduct)
+productRouter.post(
+  '/add',
+  upload.array('images', IMAGE_UPLOAD_LIMIT), //upload array take 2 argument one is {fieldname,maxlimit}
+  authSeller,
+  addProduct
+)
 
 productRouter.get('/list', productList)
 

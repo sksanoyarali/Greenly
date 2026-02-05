@@ -5,7 +5,11 @@ import { v2 as cloudinary } from 'cloudinary'
 export const addProduct = async (req, res) => {
   try {
     let productData = JSON.parse(req.body.productData)
-
+    //productData a STRING json
+    // Because  i am using Multer (multipart/form-data)
+    // When your request includes files upload.array('images)
+    // All non-file fields arrive as strings
+    // even if you send JSON from frontend
     const images = req.files
 
     let imagesUrl = await Promise.all(
