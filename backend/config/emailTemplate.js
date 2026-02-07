@@ -103,7 +103,7 @@ export const orderConfirmationTemplate2 = ({
           .map(
             (item) => `
             <li style="margin-bottom: 6px;">
-              ${item.name} × ${item.quantity}
+              ${item.product} × ${item.quantity}
             </li>
           `
           )
@@ -112,7 +112,7 @@ export const orderConfirmationTemplate2 = ({
 
       <p style="font-size: 16px; margin-top: 12px;">
         <strong>Total Amount:</strong>
-        <span style="color: #2f855a;">₹${amount}</span>
+        <span style="color: #2f855a;">$ ${amount}</span>
       </p>
 
       <h3 style="color: #2f855a; margin-top: 20px;">
@@ -120,7 +120,7 @@ export const orderConfirmationTemplate2 = ({
       </h3>
 
       <p style="color: #444;">
-        ${address}
+        ${address.street}
       </p>
 
       <hr style="border: none; border-top: 1px solid #e2e8e2; margin: 20px 0;" />
