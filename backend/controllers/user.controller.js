@@ -2,7 +2,7 @@ import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { cookieOptions } from '../utils/constant.js'
-
+// register user with {name ,email,password}
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body
@@ -74,7 +74,7 @@ export const registerUser = async (req, res) => {
     })
   }
 }
-
+// login user with {email,password}
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body

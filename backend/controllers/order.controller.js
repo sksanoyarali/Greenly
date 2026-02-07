@@ -1,5 +1,6 @@
 // place order with cash on delivery
 
+import { sendOrderConfirmationEmail } from '../config/emailHandler.js'
 import Order from '../models/order.model.js'
 import Product from '../models/product.model.js'
 import User from '../models/user.model.js'
@@ -22,7 +23,7 @@ export const placeOrderCOD = async (req, res) => {
 
     // add tax charge 2%
     amount += Math.floor(amount * 0.02)
-    await Order.create({
+    const order = await Order.create({
       userId,
       items,
       amount,
@@ -30,10 +31,17 @@ export const placeOrderCOD = async (req, res) => {
       paymentType: 'COD',
     })
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: 'Order placed successfully',
     })
+    sendOrderConfirmationEmail(
+      userId,
+      order._id,
+      order.items,
+      order.amount,
+      order.address
+    )
   } catch (error) {
     console.log(error.message)
     res.status(500).json({
