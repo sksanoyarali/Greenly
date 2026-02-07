@@ -24,17 +24,17 @@ export const orderConfirmationTemplate = ({
         .map(
           (item) => `
           <li>
-            ${item.name} × ${item.quantity}
+            ${item.product.name} × ${item.quantity}
           </li>
         `
         )
         .join('')}
     </ul>
 
-    <p><strong>Total Amount:</strong> ₹${amount}</p>
+    <p><strong>Total Amount:</strong>$ ${amount}</p>
 
     <h3>Delivery Address</h3>
-    <p>${address}</p>
+    <p>${address.street} ${address.city}</p>
 
     <hr />
 
@@ -103,7 +103,7 @@ export const orderConfirmationTemplate2 = ({
           .map(
             (item) => `
             <li style="margin-bottom: 6px;">
-              ${item.product} × ${item.quantity}
+              ${item.product.name} × ${item.quantity}
             </li>
           `
           )
@@ -120,7 +120,7 @@ export const orderConfirmationTemplate2 = ({
       </h3>
 
       <p style="color: #444;">
-        ${address.street}
+         ${address.city} ${address.street}
       </p>
 
       <hr style="border: none; border-top: 1px solid #e2e8e2; margin: 20px 0;" />
