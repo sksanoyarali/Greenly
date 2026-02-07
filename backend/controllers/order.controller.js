@@ -9,47 +9,66 @@ import stripe from 'stripe'
 export const placeOrderCOD = async (req, res) => {
   const userId = req.userId
   const { items, address } = req.body
-  if (!address || items.length == 0) {
-    return res.status(401).json({
+
+  if (!address || !items?.length) {
+    return res.status(400).json({
       success: false,
       message: 'Invalid Data',
     })
   }
-  try {
-    let amount = await items.reduce(async (acc, item) => {
-      const product = await Product.findById(item.product)
-      return (await acc) + product.offerPrice * item.quantity
-    }, 0)
 
-    // add tax charge 2%
-    amount += Math.floor(amount * 0.02)
+  try {
+    // ✅ Calculate amount (clean & correct)
+    let amount = 0
+    for (const item of items) {
+      const product = await Product.findById(item.product)
+      amount += product.offerPrice * item.quantity
+    }
+
+    amount += Math.floor(amount * 0.02) // tax
+
+    // ✅ Create order
     const order = await Order.create({
       userId,
       items,
       amount,
-      address,
+      address, // addressId
       paymentType: 'COD',
     })
 
+    // ✅ Send response immediately
     res.status(201).json({
       success: true,
       message: 'Order placed successfully',
     })
+
+    // ===============================
+    // ✅ PREPARE EMAIL DATA (IMPORTANT)
+    // ===============================
+
+    const populatedOrder = await Order.findById(order._id).populate(
+      'items.product'
+    ) // 🔥 required
+
+    const fullAddress = await Address.findById(order.address)
+
+    // ✅ Non-blocking email
     sendOrderConfirmationEmail(
       userId,
-      order._id,
-      order.items,
-      order.amount,
-      order.address
-    )
+      populatedOrder._id,
+      populatedOrder.items,
+      populatedOrder.amount,
+      fullAddress
+    ).catch(console.error)
   } catch (error) {
-    console.log(error.message)
+    console.error(error)
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: 'Something went wrong',
     })
   }
 }
+
 // place order with online payment
 export const placeOrderStripe = async (req, res) => {
   const userId = req.userId
