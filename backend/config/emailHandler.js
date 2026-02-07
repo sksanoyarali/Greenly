@@ -7,7 +7,7 @@ dotenv.config()
 
 export const sendOrderConfirmationEmail = async (
   userId,
-  orderId,
+  order,
   items,
   amount,
   address
@@ -23,7 +23,7 @@ export const sendOrderConfirmationEmail = async (
       subject: 'Your Order Has Been Confirmed',
       html: orderConfirmationTemplate({
         userName: user.name,
-        orderId,
+        orderId: order._id,
         items,
         amount,
         address,
