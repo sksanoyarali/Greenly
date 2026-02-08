@@ -1,6 +1,7 @@
 // place order with cash on delivery
 
 import { sendOrderConfirmationEmail } from '../config/emailHandler.js'
+import Address from '../models/address.model.js'
 import Order from '../models/order.model.js'
 import Product from '../models/product.model.js'
 import User from '../models/user.model.js'
@@ -42,13 +43,9 @@ export const placeOrderCOD = async (req, res) => {
       message: 'Order placed successfully',
     })
 
-    // ===============================
-    // ✅ PREPARE EMAIL DATA (IMPORTANT)
-    // ===============================
-
     const populatedOrder = await Order.findById(order._id).populate(
       'items.product'
-    ) // 🔥 required
+    )
 
     const fullAddress = await Address.findById(order.address)
 
