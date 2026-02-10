@@ -36,3 +36,5 @@ export const sendOrderConfirmationEmail = async (
     console.error('Error sending order confirmation email:', error)
   }
 }
+
+// export const sendOrderConfimation
