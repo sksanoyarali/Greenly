@@ -1,6 +1,9 @@
 // place order with cash on delivery
 
-import { sendOrderConfirmationEmail } from '../config/emailHandler.js'
+import {
+  sendOrderConfirmationEmail,
+  sendOrderConfirmationEmailForOnlinePayment,
+} from '../config/emailHandler.js'
 import Address from '../models/address.model.js'
 import Order from '../models/order.model.js'
 import Product from '../models/product.model.js'
@@ -127,7 +130,7 @@ export const placeOrderStripe = async (req, res) => {
       },
     })
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       url: session.url,
     })
@@ -166,12 +169,28 @@ export const stripeWebHooks = async (request, response) => {
       const { orderId, userId } = session.data[0].metadata
 
       // mark payment as paid true
-      await Order.findByIdAndUpdate(orderId, { isPaid: true })
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        { isPaid: true },
+        { new: true }
+      ).populate('items.product')
       // clear cart data
 
       await User.findByIdAndUpdate(userId, { cartItems: {} })
+      const fullAddress = await Address.findById(order.address)
+      // log
+      console.log(order, fullAddress)
+
+      await sendOrderConfirmationEmailForOnlinePayment(
+        userId,
+        order._id,
+        order.items,
+        order.amount,
+        fullAddress
+      )
       break
     }
+
     case 'payment_intent.payment_failed': {
       const paymentIntent = event.data.object
       const paymentIntentId = paymentIntent.id
