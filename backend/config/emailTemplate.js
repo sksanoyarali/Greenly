@@ -66,7 +66,7 @@ export const orderConfirmationTemplateForOnlinePayment = ({
 
     <p>Hi <strong>${userName}</strong>,</p>
 
-    <p>Thank you for your order! Your <strong></strong> order has been placed successfully with payment commpletion.</p>
+    <p>Thank you for your order! Your <strong></strong> order has been placed successfully with payment completion.</p>
 
     <hr />
 
